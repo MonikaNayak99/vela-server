@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "security:only-security-updates"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "semanticCommits": "enabled",
+  "postUpdateOptions": [
+    "gomodTidy",
+    "gomodUpdateImportPaths"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update docker images in go files",
+      "managerFilePatterns": [
+        "/^cmd/vela-server/.+\\.go$/"
+      ],
+      "matchStrings": [
+        "\"(?<depName>.*?):(?<currentValue>[^\"]*?)@(?<currentDigest>sha256:[a-f0-9]+)\",? // renovate: container"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Keep the pinned clone image current even though other updates are security only",
+      "matchPackageNames": [
+        "target/vela-git-slim"
+      ],
+      "enabled": true
+    }
+  ]
+}
